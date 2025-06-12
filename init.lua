@@ -14,6 +14,8 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "        -- or whatever key you prefer, like ",", "\\", etc.
 vim.g.maplocalleader = ","   -- optional, for <localleader>
 
+vim.opt.ignorecase = true     -- Make searches case-insensitive
+vim.opt.smartcase = true
 
 require("lazy").setup({
 	{
