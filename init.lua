@@ -45,10 +45,10 @@ require("lazy").setup({
 		    local buf = args.buf
 		    local opts = { buffer = buf, noremap = true, silent = true }
 
-		    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-		    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+		    -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+		    -- vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 		    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-		    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+		    -- vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
 		    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 		    vim.keymap.set("n", "<leader>ai", vim.lsp.buf.code_action, opts)
 		  end,
@@ -162,6 +162,13 @@ require("lazy").setup({
 		end,
   	},
 	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = { 'nvim-lua/plenary.nvim' },
+	    	config = function()
+	      		require('telescope').setup{}
+	    	end,
+	},
+	{
 		{ import = "plugins" }
 	},
 	-- Configure any other settings here. See the documentation for more details.
@@ -234,3 +241,26 @@ vim.diagnostic.config({
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
 
+local telescope = require('telescope.builtin')
+
+-- Keybindings
+vim.keymap.set('n', '<Leader>gs', function()
+  telescope.lsp_document_symbols()
+end, { desc = '[G]oto [S]ymbol in file' })
+
+vim.keymap.set('n', '<Leader>gw', function()
+  telescope.lsp_workspace_symbols()
+end, { desc = '[G]oto [W]orkspace class' })
+
+
+-- References
+vim.keymap.set('n', '<Leader>gr', telescope.lsp_references, { desc = '[G]oto [R]eferences' })
+
+-- Definitions
+vim.keymap.set('n', '<Leader>gd', telescope.lsp_definitions, { desc = '[G]oto [D]efinition' })
+
+-- Implementations
+vim.keymap.set('n', '<Leader>gi', telescope.lsp_implementations, { desc = '[G]oto [I]mplementation' })
+
+-- Type Definitions
+vim.keymap.set('n', '<Leader>gt', telescope.lsp_type_definitions, { desc = '[G]oto [T]ype Definition' })
