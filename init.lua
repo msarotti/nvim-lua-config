@@ -16,6 +16,33 @@ vim.g.maplocalleader = ","   -- optional, for <localleader>
 
 vim.opt.ignorecase = true     -- Make searches case-insensitive
 vim.opt.smartcase = true
+vim.opt.termguicolors = true
+-- vim.opt.autoread = true
+vim.opt.signcolumn = "yes:2"        -- Reserve space for signs and adds padding
+vim.opt.numberwidth = 4             -- Width of the line number column
+vim.opt.scrolloff = 8               -- Keep 8 lines above/below cursor when scrolling
+vim.opt.sidescrolloff = 8           -- Keep 8 columns left/right of cursor when scrolling horizontally
+
+-- Add a faux-margin by highlighting specific columns
+-- vim.opt.colorcolumn = "1,80,120"    -- Highlight columns 1 (left margin), 80, and 120
+
+-- You can create a custom highlight for the colorcolumn to make it more subtle
+-- vim.cmd[[highlight ColorColumn guibg=#1c1c1c ctermbg=234]]
+
+vim.opt.number = true
+-- vim.opt.relativenumber = true
+
+-- Show matching brackets
+vim.opt.showmatch = true
+
+-- Highlight the current line
+vim.opt.cursorline = true
+
+-- Display incomplete commands in the bottom right corner
+vim.opt.showcmd = true
+
+-- Set a nicer split character
+vim.opt.fillchars = { vert = "│" }
 
 require("lazy").setup({
 	{
@@ -31,6 +58,9 @@ require("lazy").setup({
 	},
 	{ 
 		"catppuccin/nvim", name = "catppuccin", priority = 1000 
+	},
+	{
+		'Mofiqul/vscode.nvim'
 	},
 	{
 		"mason-org/mason.nvim",
@@ -61,7 +91,7 @@ require("lazy").setup({
 	    config = function()
 	      require("lualine").setup({
 		options = {
-		  theme = "gruvbox",  -- or "tokyonight", "auto", etc.
+		  theme = "vscode",  -- or "tokyonight", "auto", etc.
 		  section_separators = "",
 		  component_separators = "",
 		},
@@ -164,9 +194,27 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = { 'nvim-lua/plenary.nvim' },
-	    	config = function()
-	      		require('telescope').setup{}
-	    	end,
+		config = function()
+			require('telescope').setup{}
+		end,
+	},
+	{
+		'nvim-telescope/telescope-fzf-native.nvim',
+		build = 'make',
+		dependencies = {'nvim-telescope/telescope.nvim'},
+	
+	},
+	{
+		"djoshea/vim-autoread"
+	},
+	{
+		"norcalli/nvim-colorizer.lua",
+		config = function()
+			require("colorizer").setup()
+		end
+	},
+	{
+		'numToStr/Comment.nvim',
 	},
 	{
 		{ import = "plugins" }
@@ -178,14 +226,14 @@ require("lazy").setup({
 	checker = { enabled = true },
 })
 
-vim.cmd.colorscheme "catppuccin-frappe"
+-- vim.cmd.colorscheme "catppuccin-frappe"
 
-vim.keymap.set("n", "<leader>ff", ":Files<CR>", { desc = "FZF: Find files" })
-vim.keymap.set("n", "<leader>fb", ":Buffers<CR>", { desc = "FZF: Find buffers" })
-vim.keymap.set("n", "<leader>fg", ":GFiles<CR>", { desc = "FZF: Git files" })
-vim.keymap.set("n", "<leader>fl", ":Lines<CR>", { desc = "FZF: Search lines in open buffers" })
-vim.keymap.set("n", "<leader>fr", ":Rg<CR>", { desc = "FZF: Ripgrep search" })
-vim.keymap.set("n", "<leader>fh", ":History<CR>", { desc = "FZF: Command history" })
+-- vim.keymap.set("n", "<leader>ff", ":Files<CR>", { desc = "FZF: Find files" })
+-- vim.keymap.set("n", "<leader>fb", ":Buffers<CR>", { desc = "FZF: Find buffers" })
+-- vim.keymap.set("n", "<leader>fg", ":GFiles<CR>", { desc = "FZF: Git files" })
+-- vim.keymap.set("n", "<leader>fl", ":Lines<CR>", { desc = "FZF: Search lines in open buffers" })
+-- vim.keymap.set("n", "<leader>fr", ":Rg<CR>", { desc = "FZF: Ripgrep search" })
+-- vim.keymap.set("n", "<leader>fh", ":History<CR>", { desc = "FZF: Command history" })
 vim.keymap.set("n", "<leader>gb", function()
   require("gitsigns").toggle_current_line_blame()
 end, { desc = "Toggle Git blame for current line" })
@@ -241,6 +289,7 @@ vim.diagnostic.config({
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
 
+
 local telescope = require('telescope.builtin')
 
 -- Keybindings
@@ -264,3 +313,92 @@ vim.keymap.set('n', '<Leader>gi', telescope.lsp_implementations, { desc = '[G]ot
 
 -- Type Definitions
 vim.keymap.set('n', '<Leader>gt', telescope.lsp_type_definitions, { desc = '[G]oto [T]ype Definition' })
+
+
+
+-- Configure telescope to use fzf
+require('telescope').setup {
+--   defaults = {
+--     -- Use the fzf sorter
+--     file_sorter = require('telescope.sorters').get_fzf_sorter(),
+--     generic_sorter = require('telescope.sorters').get_fzf_sorter(),
+--   },
+  extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = true,  -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+    }
+  }
+}
+
+-- Load the fzf extension
+require('telescope').load_extension('fzf')
+
+-- Replace FZF keybindings with Telescope equivalents
+vim.keymap.set("n", "<leader>ff", function() require('telescope.builtin').find_files() end, { desc = "Telescope: Find files" })
+vim.keymap.set("n", "<leader>fb", function() require('telescope.builtin').buffers() end, { desc = "Telescope: Find buffers" })
+vim.keymap.set("n", "<leader>fg", function() require('telescope.builtin').git_files() end, { desc = "Telescope: Git files" })
+-- vim.keymap.set("n", "<leader>fl", function() require('telescope.builtin').live_grep({ grep_open_files = true }) end, { desc = "Telescope: Search lines in open buffers" })
+vim.keymap.set("n", "<leader>fr", function() require('telescope.builtin').live_grep() end, { desc = "Telescope: Ripgrep search" })
+vim.keymap.set("n", "<leader>fh", function() require('telescope.builtin').oldfiles() end, { desc = "Telescope: File history" })
+
+-- Search in line with a more detailed config
+vim.keymap.set("n", "<leader>fl", function()
+  require('telescope.builtin').live_grep({
+    grep_open_files = true,
+    prompt_title = "Search Lines in Open Buffers"
+  })
+end, { desc = "Telescope: Search lines in open buffers" })
+
+-- If you prefer command history instead of file history
+vim.keymap.set("n", "<leader>fc", function() 
+  require('telescope.builtin').command_history() 
+end, { desc = "Telescope: Command history" })
+
+
+-- Lua:
+-- For dark theme (neovim's default)
+vim.o.background = 'dark'
+-- For light theme
+-- vim.o.background = 'light'
+
+local c = require('vscode.colors').get_colors()
+require('vscode').setup({
+    -- Alternatively set style in setup
+    -- style = 'light'
+
+    -- Enable transparent background
+    transparent = true,
+
+    -- Enable italic comment
+    italic_comments = true,
+
+    -- Underline `@markup.link.*` variants
+    underline_links = true,
+
+    -- Disable nvim-tree background color
+    disable_nvimtree_bg = true,
+
+    -- Apply theme colors to terminal
+    terminal_colors = true,
+
+    -- Override colors (see ./lua/vscode/colors.lua)
+    color_overrides = {
+        vscLineNumber = '#3f3f3f',
+    },
+
+    -- Override highlight groups (see ./lua/vscode/theme.lua)
+    group_overrides = {
+        -- this supports the same val table as vim.api.nvim_set_hl
+        -- use colors from this colorscheme by requiring vscode.colors!
+        Cursor = { fg=c.vscDarkBlue, bg=c.vscLightGreen, bold=true },
+    }
+})
+-- require('vscode').load()
+
+-- load the theme without affecting devicon colors.
+vim.cmd.colorscheme "vscode"
+
+require('Comment').setup()
