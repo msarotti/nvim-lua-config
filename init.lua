@@ -42,7 +42,7 @@ vim.opt.cursorline = true
 vim.opt.showcmd = true
 
 -- Set a nicer split character
-vim.opt.fillchars = { vert = "│" }
+vim.opt.fillchars = { vert = "Ôöé" }
 
 require("lazy").setup({
 	{
@@ -275,7 +275,7 @@ dap.configurations.php = {
 
 vim.diagnostic.config({
   virtual_text = {
-    prefix = "●",  -- Could be '●', '▎', '■', etc.
+    prefix = "ÔùÅ",  -- Could be 'ÔùÅ', 'ÔûÄ', 'Ôûá', etc.
     spacing = 2,
     severity = { min = vim.diagnostic.severity.ERROR }, -- Show only errors or remove for all
   },
@@ -293,7 +293,7 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnos
 local telescope = require('telescope.builtin')
 
 -- Keybindings
-vim.keymap.set('n', '<Leader>gs', function()
+vim.keymap.set('n', 'fs', function()
   telescope.lsp_document_symbols()
 end, { desc = '[G]oto [S]ymbol in file' })
 
@@ -303,16 +303,16 @@ end, { desc = '[G]oto [W]orkspace class' })
 
 
 -- References
-vim.keymap.set('n', '<Leader>gr', telescope.lsp_references, { desc = '[G]oto [R]eferences' })
+vim.keymap.set('n', 'gr', telescope.lsp_references, { desc = '[G]oto [R]eferences' })
 
 -- Definitions
-vim.keymap.set('n', '<Leader>gd', telescope.lsp_definitions, { desc = '[G]oto [D]efinition' })
+vim.keymap.set('n', 'gd', telescope.lsp_definitions, { desc = '[G]oto [D]efinition' })
 
 -- Implementations
-vim.keymap.set('n', '<Leader>gi', telescope.lsp_implementations, { desc = '[G]oto [I]mplementation' })
+vim.keymap.set('n', 'gi', telescope.lsp_implementations, { desc = '[G]oto [I]mplementation' })
 
 -- Type Definitions
-vim.keymap.set('n', '<Leader>gt', telescope.lsp_type_definitions, { desc = '[G]oto [T]ype Definition' })
+vim.keymap.set('n', 'gt', telescope.lsp_type_definitions, { desc = '[G]oto [T]ype Definition' })
 
 
 
@@ -337,15 +337,15 @@ require('telescope').setup {
 require('telescope').load_extension('fzf')
 
 -- Replace FZF keybindings with Telescope equivalents
-vim.keymap.set("n", "<leader>ff", function() require('telescope.builtin').find_files() end, { desc = "Telescope: Find files" })
-vim.keymap.set("n", "<leader>fb", function() require('telescope.builtin').buffers() end, { desc = "Telescope: Find buffers" })
-vim.keymap.set("n", "<leader>fg", function() require('telescope.builtin').git_files() end, { desc = "Telescope: Git files" })
+vim.keymap.set("n", "ff", function() require('telescope.builtin').find_files() end, { desc = "Telescope: Find files" })
+vim.keymap.set("n", "fb", function() require('telescope.builtin').buffers() end, { desc = "Telescope: Find buffers" })
+vim.keymap.set("n", "fg", function() require('telescope.builtin').git_files() end, { desc = "Telescope: Git files" })
 -- vim.keymap.set("n", "<leader>fl", function() require('telescope.builtin').live_grep({ grep_open_files = true }) end, { desc = "Telescope: Search lines in open buffers" })
-vim.keymap.set("n", "<leader>fr", function() require('telescope.builtin').live_grep() end, { desc = "Telescope: Ripgrep search" })
-vim.keymap.set("n", "<leader>fh", function() require('telescope.builtin').oldfiles() end, { desc = "Telescope: File history" })
+vim.keymap.set("n", "fr", function() require('telescope.builtin').live_grep() end, { desc = "Telescope: Ripgrep search" })
+vim.keymap.set("n", "fh", function() require('telescope.builtin').oldfiles() end, { desc = "Telescope: File history" })
 
 -- Search in line with a more detailed config
-vim.keymap.set("n", "<leader>fl", function()
+vim.keymap.set("n", "fl", function()
   require('telescope.builtin').live_grep({
     grep_open_files = true,
     prompt_title = "Search Lines in Open Buffers"
@@ -396,9 +396,22 @@ require('vscode').setup({
         Cursor = { fg=c.vscDarkBlue, bg=c.vscLightGreen, bold=true },
     }
 })
+
+
+require("catppuccin").setup({
+  custom_highlights = function(colors)
+    return {
+      ["@function.method.php"] = { fg = colors.blue },     -- Change to desired color
+      ["@method.name"] = { fg = colors.blue },
+      ["@variable"] = { fg = colors.text },
+      ["@property"] = { fg = colors.subtext1 },
+    }
+  end
+})
 -- require('vscode').load()
 
 -- load the theme without affecting devicon colors.
 vim.cmd.colorscheme "vscode"
+-- vim.cmd.colorscheme "catppuccin"
 
 require('Comment').setup()
